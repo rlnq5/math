@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f4f3e8">
+    <title>مختبر الدوال الأسية التفاعلي - رغد العتيبي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f3e8;
+            --card-bg: #092e20;
+            --accent-color: #e5bd6f;
+            --text-white: #fff;
+            --text-muted: #9ab0a5;
+            --text-dark: #123024;
+            --text-green: #256a4e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Cairo", sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            padding: 16px 12px 28px;
+            overflow-x: hidden;
+            background: var(--bg-color);
+            color: var(--text-dark);
+        }
+
+        button, summary {
+            font: inherit;
+        }
+
+        .container {
+            width: min(100%, 520px);
+            margin: 0 auto;
+        }
+
+        .top-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            margin: 2px 4px 25px;
+        }
+
+        .nav-right, .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 0.95rem;
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .logo-text p {
+            color: #7a8274;
+            font-size: 0.68rem;
+        }
+
+        .nav-left {
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 6px;
+        }
+
+        .badge {
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #e7e7da;
+            color: var(--text-dark);
+            font-size: 0.66rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-active {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: #dbe4dc;
+            color: var(--text-green);
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #2da171;
+        }
+
+        .intro-section {
+            padding: 0 10px;
+            margin-bottom: 22px;
+        }
+
+        .sub-tag {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 7px;
+            color: #7a8274;
+            font-size: 0.82rem;
+        }
+
+        .sub-tag::after {
+            width: 28px;
+            height: 2px;
+            background: #7a8274;
+            content: "";
+        }
+
+        .main-heading {
+            margin-bottom: 10px;
+            font-size: clamp(1.55rem, 7vw, 1.9rem);
+            font-weight: 800;
+            line-height: 1.35;
+        }
+
+        .main-heading span {
+            color: var(--text-green);
+        }
+
+        .description-text {
+            color: #555e52;
+            font-size: 0.86rem;
+            line-height: 1.8;
+        }
+
+        .simulation-card {
+            padding: 18px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            border-radius: 24px;
+            background: var(--card-bg);
+            box-shadow: 0 15px 35px rgb(9 46 32 / 15%);
+            color: var(--text-white);
+        }
+
+        .sim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .sim-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+        }
+
+        .sim-status {
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: rgb(255 255 255 / 5%);
+            color: var(--text-muted);
+            font-size: 0.7rem;
+            white-space: nowrap;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            height: 270px;
+            margin-bottom: 14px;
+            overflow: hidden;
+            border: 1px solid rgb(255 255 255 / 7%);
+            border-radius: 15px;
+            background: #062218;
+            touch-action: pan-y;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .equation-box {
+            padding: 9px 10px;
+            margin-bottom: 12px;
+            border: 1px dashed rgb(255 255 255 / 16%);
+            border-radius: 12px;
+            background: rgb(255 255 255 / 3%);
+            color: var(--accent-color);
+            direction: ltr;
+            font-family: monospace, "Cairo", sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .controls-panel {
+            padding: 14px;
+            margin-bottom: 13px;
+            border-radius: 16px;
+            background: rgb(255 255 255 / 4%);
+        }
+
+        .slider-group {
+            margin-bottom: 12px;
+        }
+
+        .slider-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .slider-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 4px;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+        }
+
+        .slider-label strong {
+            color: var(--accent-color);
+            direction: ltr;
+            unicode-bidi: isolate;
+        }
+
+        input[type="range"] {
+            display: block;
+            width: 100%;
+            height: 24px;
+            margin: 0;
+            accent-color: var(--accent-color);
+            cursor: pointer;
+            touch-action: pan-y;
+        }
+
+        input[type="range"]:focus-visible, button:focus-visible, summary:focus-visible {
+            outline: 3px solid var(--accent-color);
+            outline-offset: 3px;
+        }
+
+        .range-ends {
+            display: flex;
+            justify-content: space-between;
+            direction: ltr;
+            color: var(--text-muted);
+            font-size: 0.62rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid rgb(255 255 255 / 9%);
+            text-align: center;
+        }
+
+        .stat-box .label {
+            display: block;
+            margin-bottom: 2px;
+            color: var(--text-muted);
+            font-size: 0.7rem;
+        }
+
+        .stat-box .value {
+            font-size: 1.08rem;
+            font-weight: 700;
+        }
+
+        .info-accordion {
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid #edf0ec;
+            border-radius: 18px;
+            background: #fafbfa;
+            box-shadow: 0 4px 12px rgb(0 0 0 / 2%);
+        }
+
+        .accordion-header {
+            display: flex;
+            min-height: 54px;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            font-weight: 700;
+            list-style: none;
+        }
+
+        .accordion-header::-webkit-details-marker {
+            display: none;
+        }
+
+        .accordion-header:hover {
+            background: #f4f6f3;
+        }
+
+        .accordion-icon {
+            color: var(--text-green);
+            font-size: 0.8rem;
+            transition: transform 0.2s ease;
+        }
+
+        .info-accordion[open] .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            padding: 14px 16px 17px;
+            border-top: 1px solid #f0f3ef;
+            background: #fff;
+            color: #555;
+            font-size: 0.83rem;
+            line-height: 1.8;
+        }
+
+        .accordion-content p + p {
+            margin-top: 8px;
+        }
+
+        .formula {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 5px;
+            background: #f1f4ef;
+            color: var(--text-green);
+            direction: ltr;
+            font-family: monospace, sans-serif;
+        }
+
+        .student-footer-card {
+            padding: 17px 18px;
+            margin-top: 22px;
+            border-right: 5px solid var(--accent-color);
+            border-radius: 20px;
+            background: linear-gradient(135deg, #092e20 0%, #114230 100%);
+            box-shadow: 0 10px 25px rgb(9 46 32 / 15%);
+            color: #fff;
+        }
+
+        .footer-title {
+            margin-bottom: 12px;
+            color: var(--accent-color);
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .footer-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .footer-label {
+            color: var(--text-muted);
+            font-size: 0.68rem;
+        }
+
+        .footer-value {
+            color: #fff;
+            font-size: 0.84rem;
+            font-weight: 700;
+        }
+
+        .reset-button {
+            min-height: 42px;
+            padding: 8px 14px;
+            margin-top: 12px;
+            border: 1px solid rgb(255 255 255 / 18%);
+            border-radius: 11px;
+            background: transparent;
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .reset-button:hover {
+            background: rgb(255 255 255 / 7%);
+        }
+
+        @media (max-width: 380px) {
+            body {
+                padding-right: 9px;
+                padding-left: 9px;
+            }
+
+            .top-navbar {
+                gap: 5px;
+                margin-bottom: 20px;
+            }
+
+            .nav-right, .nav-left {
+                gap: 5px;
+            }
+
+            .badge {
+                padding: 5px 7px;
+                font-size: 0.6rem;
+            }
+
+            .logo-text h1 {
+                font-size: 0.82rem;
+            }
+
+            .logo-text p {
+                font-size: 0.6rem;
+            }
+
+            .simulation-card {
+                padding: 14px;
+            }
+
+            .sim-title {
+                font-size: 0.82rem;
+            }
+
+            .sim-status {
+                font-size: 0.62rem;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <header class="top-navbar">
+            <div class="nav-right">
+                <span class="nav-icon" aria-hidden="true">📐</span>
+                <div class="logo-text">
+                    <h1>مختبر الرياضيات الرقمي</h1>
+                    <p>نمذجة وعرض الدوال هندسياً</p>
+                </div>
+            </div>
+            <div class="nav-left">
+                <span class="badge">الثالث ثانوي</span>
+                <span class="badge badge-active"><span class="dot" aria-hidden="true"></span>رسم ديناميكي</span>
+            </div>
+        </header>
+
+        <section class="intro-section" aria-labelledby="mainHeading">
+            <p class="sub-tag">الفصل الدراسي الأول</p>
+            <h2 class="main-heading" id="mainHeading">مختبر تفاعل <span>الدوال الأُسّية.</span></h2>
+            <p class="description-text">اسحبي المؤشرات لتغيير قيم الثوابت والأساس، وشاهدي كيف يتغير سلوك المنحنى الرياضي فورياً بين النمو والاضمحلال.</p>
+        </section>
+
+        <section class="simulation-card" aria-label="مختبر رسم الدالة الأسية">
+            <div class="sim-header">
+                <h3 class="sim-title">📈 الرسم البياني للدالة الأسية</h3>
+                <p class="sim-status" id="simStatusText" role="status" aria-live="polite">حرّكي المؤشر على الرسم لقراءة قيمة الدالة</p>
+            </div>
+
+            <div class="canvas-container">
+                <canvas id="graphCanvas" aria-label="رسم بياني تفاعلي للدالة الأسية. حرّكي المؤشر على الرسم لعرض قيمة الدالة."></canvas>
+            </div>
+
+            <div class="equation-box" id="equation" aria-live="polite">f(x) = 1.0 × 2.0<sup>x</sup> + 0.0</div>
+
+            <div class="controls-panel" aria-label="متحكمات الدالة">
+                <div class="slider-group">
+                    <label class="slider-label" for="coefficient">
+                        <span>معامل الدالة (a)</span>
+                        <strong id="coefficientValue">1.0</strong>
+                    </label>
+                    <input id="coefficient" type="range" min="-3" max="3" step="0.1" value="1" aria-label="معامل الدالة a">
+                    <div class="range-ends"><span>-3</span><span>3</span></div>
+                </div>
+                <div class="slider-group">
+                    <label class="slider-label" for="base">
+                        <span>الأساس (b)</span>
+                        <strong id="baseValue">2.0</strong>
+                    </label>
+                    <input id="base" type="range" min="0.2" max="3" step="0.1" value="2" aria-label="أساس الدالة b">
+                    <div class="range-ends"><span>0.2</span><span>3</span></div>
+                </div>
+                <div class="slider-group">
+                    <label class="slider-label" for="shift">
+                        <span>الإزاحة الرأسية (c)</span>
+                        <strong id="shiftValue">0.0</strong>
+                    </label>
+                    <input id="shift" type="range" min="-5" max="5" step="0.5" value="0" aria-label="الإزاحة الرأسية c">
+                    <div class="range-ends"><span>-5</span><span>5</span></div>
+                </div>
+            </div>
+
+            <div class="stats-grid" aria-label="خصائص الدالة">
+                <div class="stat-box">
+                    <span class="label">سلوك المنحنى</span>
+                    <span class="value" id="functionType">نمو أسي</span>
+                </div>
+                <div class="stat-box">
+                    <span class="label">المقطع الصادي f(0)</span>
+                    <span class="value" id="yIntercept">1.0</span>
+                </div>
+            </div>
+        </section>
+
+        <details class="info-accordion">
+            <summary class="accordion-header">
+                <span>❓ كيف أستخدم المختبر؟</span>
+                <span class="accordion-icon" aria-hidden="true">▼</span>
+            </summary>
+            <div class="accordion-content">
+                <p>حرّكي أشرطة التحكم لتغيير المعامل <span class="formula">a</span> والأساس <span class="formula">b</span> والإزاحة الرأسية <span class="formula">c</span>. يتحدث الرسم والخصائص مباشرة، ويتكيف مقياس المحور الرأسي تلقائياً لإظهار المنحنى.</p>
+                <p>مرّري المؤشر أو إصبعك فوق الرسم لقراءة إحداثيات نقطة من المنحنى.</p>
+                <button class="reset-button" id="resetButton" type="button">إعادة القيم الافتراضية</button>
+            </div>
+        </details>
+
+        <details class="info-accordion">
+            <summary class="accordion-header">
+                <span>📚 ما خصائص الدالة الأسية؟</span>
+                <span class="accordion-icon" aria-hidden="true">▼</span>
+            </summary>
+            <div class="accordion-content">
+                <p>نستخدم هنا الصورة <span class="formula">f(x) = a × b<sup>x</sup> + c</span>، حيث يجب أن يكون الأساس موجباً.</p>
+                <p>إذا كان <span class="formula">b &gt; 1</span> فالدالة الأساسية متزايدة، وإذا كان <span class="formula">0 &lt; b &lt; 1</span> فهي متناقصة. أما <span class="formula">c</span> فيحرّك المنحنى رأسياً ويحدد خط التقارب الأفقي <span class="formula">y = c</span>.</p>
+                <p>في هذا النموذج <span class="formula">f(0) = a + c</span>، لأن <span class="formula">b⁰ = 1</span>.</p>
+            </div>
+        </details>
+
+        <footer class="student-footer-card">
+            <div class="footer-title">مختبر الرياضيات الرقمي</div>
+            <div class="footer-grid">
+                <div class="footer-item">
+                    <span class="footer-label">الطالبة</span>
+                    <span class="footer-value">رغد العتيبي</span>
+                </div>
+                <div class="footer-item">
+                    <span class="footer-label">الموضوع</span>
+                    <span class="footer-value">الدوال الأسية</span>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        (() => {
+            const canvas = document.getElementById("graphCanvas");
+            const ctx = canvas.getContext("2d");
+            const container = canvas.parentElement;
+            const coefficientInput = document.getElementById("coefficient");
+            const baseInput = document.getElementById("base");
+            const shiftInput = document.getElementById("shift");
+            const equation = document.getElementById("equation");
+            const status = document.getElementById("simStatusText");
+
+            const plot = { left: 42, right: 14, top: 16, bottom: 30, xMin: -4, xMax: 4, yMin: -10, yMax: 20, yStep: 5 };
+            let width = 0;
+            let height = 0;
+            let pixelRatio = 1;
+            let pointerX = null;
+
+            const getParameters = () => ({
+                a: Number(coefficientInput.value),
+                b: Number(baseInput.value),
+                c: Number(shiftInput.value)
+            });
+
+            const formatNumber = (number, digits = 1) => {
+                const rounded = Number(number.toFixed(digits));
+                return Object.is(rounded, -0) ? "0.0" : rounded.toFixed(digits);
+            };
+
+            const functionValue = (x, { a, b, c }) => a * (b ** x) + c;
+
+            function plotDimensions() {
+                return {
+                    x: plot.left,
+                    y: plot.top,
+                    width: Math.max(1, width - plot.left - plot.right),
+                    height: Math.max(1, height - plot.top - plot.bottom)
+                };
+            }
+
+            function toCanvasX(x, area) {
+                return area.x + ((x - plot.xMin) / (plot.xMax - plot.xMin)) * area.width;
+            }
+
+            function toCanvasY(y, area) {
+                return area.y + ((plot.yMax - y) / (plot.yMax - plot.yMin)) * area.height;
+            }
+
+            function updateYAxis(parameters) {
+                const values = [
+                    functionValue(plot.xMin, parameters),
+                    functionValue(plot.xMax, parameters),
+                    parameters.c,
+                    0
+                ];
+                let min = Math.min(...values);
+                let max = Math.max(...values);
+                if (max - min < 1e-9) {
+                    min -= 1;
+                    max += 1;
+                }
+
+                const padding = (max - min) * 0.08;
+                min -= padding;
+                max += padding;
+                const roughStep = (max - min) / 6;
+                const magnitude = 10 ** Math.floor(Math.log10(roughStep));
+                const normalizedStep = roughStep / magnitude;
+                const stepFactor = normalizedStep <= 1 ? 1 : normalizedStep <= 2 ? 2 : normalizedStep <= 5 ? 5 : 10;
+                plot.yStep = stepFactor * magnitude;
+                plot.yMin = Math.floor(min / plot.yStep) * plot.yStep;
+                plot.yMax = Math.ceil(max / plot.yStep) * plot.yStep;
+            }
+
+            function drawGrid(area) {
+                ctx.font = "11px Cairo, sans-serif";
+                ctx.direction = "ltr";
+                ctx.textAlign = "center";
+                ctx.textBaseline = "top";
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = "rgba(255,255,255,0.08)";
+                ctx.fillStyle = "rgba(206,220,211,0.72)";
+
+                for (let x = plot.xMin; x <= plot.xMax; x += 1) {
+                    const canvasX = toCanvasX(x, area);
+                    ctx.beginPath();
+                    ctx.moveTo(canvasX, area.y);
+                    ctx.lineTo(canvasX, area.y + area.height);
+                    ctx.stroke();
+                    ctx.fillText(String(x), canvasX, area.y + area.height + 7);
+                }
+
+                ctx.textAlign = "right";
+                ctx.textBaseline = "middle";
+                const firstYTick = Math.ceil(plot.yMin / plot.yStep) * plot.yStep;
+                for (let y = firstYTick; y <= plot.yMax + plot.yStep * 1e-6; y += plot.yStep) {
+                    const canvasY = toCanvasY(y, area);
+                    ctx.beginPath();
+                    ctx.moveTo(area.x, canvasY);
+                    ctx.lineTo(area.x + area.width, canvasY);
+                    ctx.stroke();
+                    ctx.fillText(Number(y.toPrecision(6)).toString(), area.x - 7, canvasY);
+                }
+
+                ctx.strokeStyle = "rgba(255,255,255,0.55)";
+                ctx.lineWidth = 1.4;
+                ctx.beginPath();
+                ctx.moveTo(area.x, toCanvasY(0, area));
+                ctx.lineTo(area.x + area.width, toCanvasY(0, area));
+                ctx.moveTo(toCanvasX(0, area), area.y);
+                ctx.lineTo(toCanvasX(0, area), area.y + area.height);
+                ctx.stroke();
+            }
+
+            function drawCurve(area, parameters) {
+                ctx.save();
+                ctx.beginPath();
+                ctx.rect(area.x, area.y, area.width, area.height);
+                ctx.clip();
+                ctx.beginPath();
+                ctx.strokeStyle = "#e5bd6f";
+                ctx.lineWidth = 3;
+                ctx.lineJoin = "round";
+
+                const samples = Math.ceil(area.width * 1.5);
+                let penDown = false;
+                for (let index = 0; index <= samples; index += 1) {
+                    const x = plot.xMin + (index / samples) * (plot.xMax - plot.xMin);
+                    const y = functionValue(x, parameters);
+                    const canvasX = toCanvasX(x, area);
+                    const canvasY = toCanvasY(y, area);
+                    if (!Number.isFinite(canvasY)) {
+                        penDown = false;
+                        continue;
+                    }
+                    if (!penDown) {
+                        ctx.moveTo(canvasX, canvasY);
+                        penDown = true;
+                    } else {
+                        ctx.lineTo(canvasX, canvasY);
+                    }
+                }
+                ctx.stroke();
+                ctx.restore();
+            }
+
+            function drawPointer(area, parameters) {
+                if (pointerX === null) return;
+                const canvasX = Math.max(area.x, Math.min(area.x + area.width, pointerX));
+                const x = plot.xMin + ((canvasX - area.x) / area.width) * (plot.xMax - plot.xMin);
+                const y = functionValue(x, parameters);
+                if (!Number.isFinite(y) || y < plot.yMin || y > plot.yMax) {
+                    status.textContent = `x = ${formatNumber(x)} · خارج مجال الرسم`;
+                    return;
+                }
+
+                const canvasY = toCanvasY(y, area);
+                ctx.beginPath();
+                ctx.setLineDash([4, 4]);
+                ctx.strokeStyle = "rgba(229,189,111,0.45)";
+                ctx.lineWidth = 1;
+                ctx.moveTo(canvasX, area.y);
+                ctx.lineTo(canvasX, area.y + area.height);
+                ctx.moveTo(area.x, canvasY);
+                ctx.lineTo(area.x + area.width, canvasY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.arc(canvasX, canvasY, 5, 0, Math.PI * 2);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+                ctx.strokeStyle = "#e5bd6f";
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                status.textContent = `x = ${formatNumber(x)} · f(x) = ${formatNumber(y)}`;
+            }
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+                const area = plotDimensions();
+                const parameters = getParameters();
+                updateYAxis(parameters);
+                drawGrid(area);
+                drawCurve(area, parameters);
+                drawPointer(area, parameters);
+            }
+
+            function update() {
+                const { a, b, c } = getParameters();
+                const aText = formatNumber(a);
+                const bText = formatNumber(b);
+                const cText = formatNumber(c);
+
+                document.getElementById("coefficientValue").textContent = aText;
+                document.getElementById("baseValue").textContent = bText;
+                document.getElementById("shiftValue").textContent = cText;
+                equation.innerHTML = `f(x) = ${aText} × ${bText}<sup>x</sup> ${c < 0 ? "−" : "+"} ${formatNumber(Math.abs(c))}`;
+                document.getElementById("yIntercept").textContent = formatNumber(a + c);
+                const direction = a * Math.log(b);
+                document.getElementById("functionType").textContent = direction > 0
+                    ? "تزايد أسي"
+                    : direction < 0
+                        ? "اضمحلال أسي"
+                        : "دالة ثابتة";
+                draw();
+            }
+
+            function resize() {
+                const rect = container.getBoundingClientRect();
+                width = rect.width;
+                height = rect.height;
+                pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+                canvas.width = Math.round(width * pixelRatio);
+                canvas.height = Math.round(height * pixelRatio);
+                ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+                draw();
+            }
+
+            function movePointer(event) {
+                const rect = canvas.getBoundingClientRect();
+                pointerX = event.clientX - rect.left;
+                draw();
+            }
+
+            for (const input of [coefficientInput, baseInput, shiftInput]) {
+                input.addEventListener("input", update);
+            }
+
+            canvas.addEventListener("pointermove", movePointer);
+            canvas.addEventListener("pointerleave", () => {
+                pointerX = null;
+                status.textContent = "حرّكي المؤشر على الرسم لقراءة قيمة الدالة";
+                draw();
+            });
+
+            document.getElementById("resetButton").addEventListener("click", () => {
+                coefficientInput.value = "1";
+                baseInput.value = "2";
+                shiftInput.value = "0";
+                pointerX = null;
+                status.textContent = "حرّكي المؤشر على الرسم لقراءة قيمة الدالة";
+                update();
+            });
+
+            if ("ResizeObserver" in window) {
+                new ResizeObserver(resize).observe(container);
+            } else {
+                window.addEventListener("resize", resize);
+            }
+
+            resize();
+            update();
+        })();
+    </script>
+</body>
+</html>
